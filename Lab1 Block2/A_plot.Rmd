@@ -1,0 +1,33 @@
+---
+title: "plot"
+author: "Mowniesh Asokan(mowas455)"
+date: "11/30/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+
+set.seed(12345)
+list1 = list()
+for (i in 1:1000) { # Indicate number of iterations with "i"
+  x1 =  runif(100)
+  x2 = runif(100)
+  y<-as.factor(as.numeric(x1<x2))
+  list1[[i]] = data.frame(x1,x2,y)
+}
+
+
+set.seed(1234)
+x1<-runif(1000)
+x2<-runif(1000)
+tedata<-cbind(x1,x2)
+y<-as.numeric(x1<x2)
+telabels<-as.factor(y)
+plot(x1,x2,col=(y+1))
+table(telabels)
+
+```

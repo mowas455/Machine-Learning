@@ -1,0 +1,80 @@
+KNN source code
+https://www.analyticsvidhya.com/blog/2018/03/introduction-k-neighbours-algorithm-clustering/
+
+
+LOGISTIC REGRESSION SOURCE CODE
+https://www.analyticsvidhya.com/blog/2015/10/basics-logistic-regression/
+
+
+Basic R function for ML
+https://online.stat.psu.edu/stat504/node/207/
+
+To Learn Linear Model in R
+http://r-statistics.co/Linear-Regression.html
+
+
+git link for KNN model for digit recognition
+https://github.com/ryanschaub/MNIST-Digit-Classification-k-nearest-neighbors-/blob/master/KNN%20Cross%20Validation%20(SML)%20Project%20(1).Rmd
+
+
+git book for learning ML
+https://daviddalpiaz.github.io/r4sl/knn-class.html
+
+
+useful link for KNN for assignment
+https://rstudio-pubs-static.s3.amazonaws.com/349520_6c62f724297f4084abb48493c6f703a5.html
+
+https://rstudio-pubs-static.s3.amazonaws.com/316172_a857ca788d1441f8be1bcd1e31f0e875.html
+
+
+
+
+overall references of article and notes about ml and stats
+https://www.extremeoptimization.com/Default.aspx
+
+
+LDA
+http://www.adeveloperdiary.com/data-science/machine-learning/linear-discriminant-analysis-from-theory-to-code/
+
+
+
+VOLOVO group Thesis
+https://xjobs.brassring.com/TGnewUI/ApplyWithPreLoad?partnerid=25079&siteid=5171&bruid=%5E1OJZGTT%2BO1RnFeaGkH%2Fz%2B6%2Bwc1%2F2oHN5&reqid=707316&localeid=&tqid=1785&aipid=0&pageid=0&noback=
+https://xjobs.brassring.com/TgNewUI/Search/Home/HomeWithPreLoad?partnerid=25079&siteid=5171&JobId=707316&PageType=jobdetails&noback=&fromSM=true&actiontype=fromjobdetails#jobDetails=707316_5171
+
+https://stackoverflow.com/questions/49331405/implement-linear-discriminant-analysis
+
+
+https://www.r-bloggers.com/2018/06/classification-from-scratch-linear-discrimination-8-8/
+
+iris notes
+https://www.apsl.net/blog/2017/07/18/using-linear-discriminant-analysis-lda-data-explore-step-step/
+
+
+
+=================================
+https://stats.stackexchange.com/questions/308872/difference-in-scaling-of-linear-discriminant-analysis-coefficients-between-manua
+
+https://cran.r-project.org/web/packages/matlib/vignettes/inv-ex1.html
+
+https://multivariatestatsjl.readthedocs.io/en/latest/mclda.html
+
+https://stats.stackexchange.com/questions/308872/difference-in-scaling-of-linear-discriminant-analysis-coefficients-between-manua
+
+http://rstudio-pubs-static.s3.amazonaws.com/269829_8285925c922e445097f47925b112841f.html
+
+
+
+https://corybrunson.github.io/2019/08/02/lda/
+
+
+https://www.r-bloggers.com/2018/06/classification-from-scratch-linear-discrimination-8-8/
+
+
+https://www.geeksforgeeks.org/linear-discriminant-analysis-in-r-programming/
+
+
+https://machinelearningmastery.com/linear-discriminant-analysis-for-machine-learning/
+
+
+https://datacadamia.com/data_mining/linear_discriminant_analysis

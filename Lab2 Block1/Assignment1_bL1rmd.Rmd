@@ -1,0 +1,254 @@
+---
+title: "Linear Discriminant Analysis"
+author: "Mowniesh Asokan(mowas455)"
+date: "12/6/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(MASS)
+library(mvtnorm)
+```
+# Assignment 1. LDA and logistic regression
+## 1. 
+
+ Actually  LDA tries to reduce dimensions of the feature set while retaining the information that discriminates output classes. LDA tries to find a decision boundary around each cluster of a class.The goal of a LDA is often to project a feature space (a data-set n-dimensional samples) into a smaller subspace k.
+ 
+ * It is linearly non-separable 
+ 
+ * Iris Setosa is linearly separable from the other two classes.so,that we can draw a line or hyper-plane to classify a each groups.
+
+```{r,echo=FALSE}
+data=iris
+x0=c(data$Sepal.Length)
+y0=c(data$Sepal.Width)
+z=c(data$Species)
+x = data.frame(x1=x0,x2=y0)
+y=as.factor(z)
+
+# scatter plot for original data with target
+ggplot(data = data, aes(x = Sepal.Length,y = Sepal.Width)) +geom_point(aes(color = factor(Species)))
+```
+ 
+## 2.
+ 
+ R functions only to implement Linear Discriminant Analysis between
+the three species based on variables Sepal Length and Sepal Width:
+Setosa    -1
+Versicolor-2
+Virginca  -3
+
+### 2a.Mean, Covariance matrices (use cov() ) and Prior probabilities per class 
+
+```{r,echo=FALSE}
+# Grouping the Targets
+  group1_index = which( y == 1 )
+  group2_index = which( y == 2 )
+  group3_index = which( y == 3 )
+  
+#priors:
+  prior_group1 = length(group1_index) / length(y)
+  prior_group2 = length(group2_index) / length(y)
+  prior_group3 = length(group3_index) / length(y)
+  print("Prior probabilities of groups:")
+  print(c(prior_group1, prior_group2,prior_group3))
+  
+#means:
+  mean_group1 = as.matrix(colMeans(x[group1_index, ]))
+  mean_group2 = as.matrix(colMeans(x[group2_index, ]))
+  mean_group3 = as.matrix(colMeans(x[group3_index, ]))
+  
+  print("Group means:")
+  print(cbind(mean_group1, mean_group2,mean_group3))
+  
+# Covariance Matrix
+  cv1<-cov(x[group1_index, ])
+  cv2<-cov(x[group2_index, ])
+  cv3<-cov(x[group3_index, ])
+  print("covariance matrix of group 1")
+  print(cv1)
+  
+  print("covariance matrix of group 2")
+  print(cv2)
+  
+  print("covariance matrix of group 3")
+  print(cv3)
+```
+
+### 2b.Pooled Covariance Matrix
+```{r ,echo=FALSE}
+# Pooled Co-variance Matrix
+  pooled_cv<-as.matrix((length(group1_index)*cv1)+(length(group2_index)*cv2)+
+                         (length(group3_index)*cv3))/length(y)
+  print("Pooled covariance matrix of groups")
+  print(pooled_cv)
+  
+```
+
+### 2c.Probabilistic Model for LDA
+
+
+$$x|y=C_{i},\mu_{i},\Sigma \sim N(\mu_{i},\Sigma) $$
+$$y|\pi\sim Multinomial(\pi_{1},...\pi_{}k)$$
+
+### 2d.Discriminant Function
+
+```{r}
+# Discriminant function
+ 
+ disc_fn<-function(v,p_cv,m_g,p_g)
+ {
+   v<-as.matrix(v)
+   p_cv<-solve(p_cv)
+   d1<-((v%*%p_cv)%*%(m_g))
+   d2<-(0.5*t(m_g))%*%(p_cv)%*%(m_g)
+   t_d<-d1-(as.numeric(d2))+log(p_g)
+   return(t_d)
+ }
+
+```
+### 2e.Decision Boundary
+
+```{r ,echo=FALSE}
+# Decision Boundary Function
+decision_boundary<-function(x,y,z)
+{
+  y<-solve(y)
+  m<-(-0.5*t(x))%*%(y)%*%(x)
+  w_oi<-m+log(z)
+  w_i<-y%*%x
+  #cat("w_0i",w_oi,"\n","w_i",w_i,"\n")
+}
+
+dc1<- decision_boundary(mean_group1,cv1,prior_group1)   #decision_bndy value of group 1
+dc2<- decision_boundary(mean_group2,cv2,prior_group2)   #decision_bndy value of group 2
+dc3<- decision_boundary(mean_group3,cv3,prior_group3)   #decision_bndy value of group 3
+
+dc_b<-data.frame(dc1,dc2,dc3)
+colnames(dc_b)<-c("Setosa","Versicolor","Virginica")
+cat("Coefficients")               
+dc_b
+```
+## 3.
+ Whether the error obtained using discriminant function is not same as error obtained by using LDA model, 
+but the miss-classification rate of the two model are to be same.
+
+* Both the model and function works perfectly for the class1 (setosa) and class3(virginica) , but it confuse with the class2(versicolor)
+
+```{r , echo=FALSE}
+#Bind the Discriminant values in the data.frame 
+
+ d_val1<- disc_fn(x,pooled_cv,mean_group1,prior_group1)
+ d_val2<- disc_fn(x,pooled_cv,mean_group2,prior_group2)
+ d_val3<- disc_fn(x,pooled_cv,mean_group3,prior_group3)
+
+ disc_val<-cbind(d_val1,d_val2,d_val3)
+ dis<-as.data.frame(disc_val)
+
+colnames(dis)<-c("setosa","versicolor","virginica")
+
+# Found the target value of this data by max value occurs on the row
+
+  m<-colnames(dis)[max.col(dis, ties.method = "first")]
+
+  dis$y<-m     # add those values as y in the same dataframe
+
+
+ 
+ ggplot(data = data, aes(x = Sepal.Length,y = Sepal.Width)) +
+  geom_point(aes(color = factor(dis$y))) + ggtitle("Plot shows prediction using Discriminant Function") 
+
+#confusion matrix
+
+cat("Confusion Matrix of prediction using Discriminant function")
+ table(as.factor(dis$y), y)
+
+#miss-classification rate
+missclassrate=function(y,y_i)
+{
+  n=length(y)
+  v<-1-(sum(diag(table(y,y_i)))/n)
+  return(v)
+}
+ms=missclassrate(as.factor(dis$y),y)
+
+cat("Misclassification Rate using Discrimiant function","\n")
+ms
+```
+```{r,echo=FALSE}
+#LDA Model
+  fit_lda <- lda(y~., data = x)
+  # ca("coefficients")
+  # coef(fit_lda)
+  pred_lda <- predict(fit_lda, x)
+  vn<-data.frame(original = y, pred = pred_lda$class)
+  cat("Confusion Matrix using LDA model")
+  table(vn$pred,vn$original)
+  ldms=missclassrate(as.factor(vn$pred),y)
+  cat("Misclassification Rate using LDA model","\n")
+  ldms
+  
+  ggplot(data = data, aes(x = Sepal.Length,y = Sepal.Width)) +
+   geom_point(aes(color = factor(vn$pred)))+ ggtitle("Plot shows prediction using LDA Model") 
+```
+
+### 4.Sample the Data
+
+ Sample the data of iris using the multivariate normal distribution .By specifying the mean and sigma in the old dataset. we can generate a new sample from same mean and variance of each groups. so,the scatter plot of the generated data and the orginal data is looks similar.
+
+```{r,echo=FALSE}
+# bind the all groups in a single dataframe
+  bvn1 <- rmvnorm(50, mean = mean_group1, sigma = cv1 )
+  bvn2 <- rmvnorm(50, mean = mean_group2, sigma = cv2 )
+  bvn3 <- rmvnorm(50, mean = mean_group3, sigma = cv3 )
+
+  bvn<-rbind(bvn1,bvn2,bvn3)
+  bvn<-as.data.frame(bvn)
+  bvn$y<-y
+
+  sample_data<-bvn[sample(nrow(bvn), 150), ]
+
+  colnames(bvn)<-c("sepal.length","sepal.width","species")
+  
+
+  ggplot(data =bvn, aes(x = sepal.length,y = sepal.width)) +
+    geom_point(aes(color = factor(y))) + ggtitle("sampled data of iris") 
+
+ 
+
+```
+
+### 5.Logistic Regression model
+ Logistic regression measures the relationship between one or more independent variables (X) and the categorical dependent variable (Y) by estimating probabilities using a logistic(sigmoid) function[1].
+ 
+ * The logistic Regression model is works better than the lda model.Because the miss-classification Rate of this model small compare with LDA model.
+
+```{r,echo=FALSE}
+### 5.Logistic Regression Model
+ 
+ library(nnet)
+ irisModel<-multinom(y~x1+x2 ,data =  x)
+  m<-summary(irisModel)
+
+  pred2<-predict(irisModel,x)
+  pred2
+
+  ggplot(data = data, aes(x = Sepal.Length,y = Sepal.Width)) +
+    geom_point(aes(color = factor(pred2)))+ ggtitle("Plot shows prediction using Logistic Regression Model") 
+
+  table("Prediction"=as.factor(pred2), "Reference"=y)   # confusiom Matrix
+  
+  lms=missclassrate(as.factor(pred2),y)
+  cat("Misclassification Rate using Logistic Regression model","\n")
+  lms
+
+```
+# References
+1.https://en.wikipedia.org/wiki/Logistic_regression
+
+# Appendix: All code for this report
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
